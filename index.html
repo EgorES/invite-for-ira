@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Сюрприз для Иры</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #ffe4ec, #ffd1dc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+      max-width: 90%;
+      transition: all 0.5s ease;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 26px;
+      color: #ff3c7e;
+    }
+
+    p {
+      font-size: 18px;
+      color: #444;
+    }
+
+    .button {
+      margin-top: 20px;
+      background: #ff69b4;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .button:hover {
+      background: #ff1493;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .hearts {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+
+<canvas class="hearts" id="hearts"></canvas>
+
+<div class="container" id="step1">
+  <h1>Привет, Ира!</h1>
+  <p>У тебя есть тайное послание 💌</p>
+  <button class="button" id="openButton">Открыть</button>
+  <button class="button" id="musicBtn">Включить музыку 🎵</button>
+</div>
+
+<div class="container hidden" id="step2">
+  <p>Я хотел бы пригласить тебя на свидание.Дата: 11 июня. Место встречи: Фрунзенская набережная 46. в 16:00. Не опаздывай:)  
+  <br><br>
+  Надеюсь, ты скажешь "да" 💖</p>
+  <button class="button" id="agreeButton">Конечно!</button>
+</div>
+
+<div class="container hidden" id="step3">
+  <p>Ты сделала меня очень счастливым 💕  
+  <br><br>До скорой встречи ✨</p>
+</div>
+
+<audio id="bg-music" loop>
+  <source src="Mana_Island_-_Dots_47953504.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  // Обработка кнопок
+  document.getElementById("openButton").addEventListener("click", function () {
+    document.getElementById("step1").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
+  });
+
+  document.getElementById("agreeButton").addEventListener("click", function () {
+    document.getElementById("step2").classList.add("hidden");
+    document.getElementById("step3").classList.remove("hidden");
+  });
+
+  document.getElementById("musicBtn").addEventListener("click", function () {
+    const audio = document.getElementById("bg-music");
+    audio.play().then(() => {
+      document.getElementById("musicBtn").style.display = "none";
+    }).catch(() => {
+      alert("Нажми ещё раз, чтобы браузер разрешил воспроизведение 🎵");
+    });
+  });
+
+  
+  const canvas = document.getElementById('hearts');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let hearts = [];
+
+  function resizeCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function createHeart() {
+    return {
+      x: Math.random() * width,
+      y: height + 20,
+      size: Math.random() * 20 + 10,
+      speed: Math.random() * 1 + 0.5,
+      opacity: Math.random()
+    };
+  }
+
+  function drawHearts() {
+    ctx.clearRect(0, 0, width, height);
+    hearts.forEach((heart, index) => {
+      ctx.globalAlpha = heart.opacity;
+      ctx.drawImage(heartImage, heart.x, heart.y, heart.size, heart.size);
+      heart.y -= heart.speed;
+      if (heart.y < -heart.size) {
+        hearts[index] = createHeart();
+        hearts[index].y = height + 20;
+      }
+    });
+    requestAnimationFrame(drawHearts);
+  }
+
+  const heartImage = new Image();
+  heartImage.src = 'https://cdn-icons-png.flaticon.com/512/833/833472.png';
+  heartImage.onload = () => {
+    for (let i = 0; i < 30; i++) {
+      hearts.push(createHeart());
+    }
+    drawHearts();
+  };
+</script>
+
+</body>
+</html>
